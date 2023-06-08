@@ -1,38 +1,58 @@
-import { TextField } from "@mui/material";
+import Dialog from "@material-tailwind/react/components/Dialog";
+import {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 import Button from "@mui/material/Button";
+import { TransitionProps } from "@mui/material/transitions";
+import React from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { TypeOf, z } from "zod";
+import ProfileCard from "./ProfileCard";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-type FormData = {
-  username: string;
-};
+// const Transition = React.forwardRef(function Transition(
+//   props: TransitionProps & {
+//     children: React.ReactElement<any, any>;
+//   },
+//   ref: React.Ref<unknown>
+// ) {
+//   return <Slide direction="up" ref={ref} {...props} />;
+// });
+
+const formSchema = z.object({
+  username: z.string().min(1, "This Field is required"),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 function GitHubUser() {
-  const { register, handleSubmit } = useForm();
-  const onFormSubmit = (data: any) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+  });
+
+  const onFormSubmit = (data: FormValues) => {
     console.log(data);
   };
 
-  return (
-    // <div className="flex justify-center">
-    //   <form>
-    //     <div className="absolute inset-0">
-    //       <div className="my-10 flex justify-center">
-    //         <h1 className="font-[poppins]">Hello world!</h1>
-    //       </div>
-    //       <div className="bg-gray-200 flex space-x-3 justify-center align-center">
-    // <TextField
-    //   id="standard-basic"
-    //   label="Standard"
-    //   variant="outlined"
-    //   className="text-blue-500"
-    // />
-    //         <Button variant="outlined">Ok</Button>
-    //       </div>
-    //     </div>
-    //   </form>
-    // </div>
+  const [open, setOpen] = React.useState(false);
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
     <div className="bg-gray-100 w-screen">
       <div
         onSubmit={handleSubmit(onFormSubmit)}
@@ -53,19 +73,32 @@ function GitHubUser() {
               placeholder="Username"
               {...register("username")}
             />
-
-            {/* <TextField
-              id="standard-basic"
-              label="Standard"
-              variant="outlined"
-            /> */}
+            <p className="text-red-500 mt-2">{errors?.username?.message}</p>
           </div>
           <button
             className="w-full bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300"
             type="submit"
+            onClick={handleClickOpen}
           >
             Accept
           </button>
+
+          {/* <Dialog
+            open={open}
+            // TransitionComponent={Transition}
+            keepMounted
+            // onClose={handleClose}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle>{"Use Google's location service?"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Disagree</Button>
+              <Button onClick={handleClose}>Agree</Button>
+            </DialogActions>
+          </Dialog> */}
         </form>
       </div>
     </div>
@@ -73,3 +106,6 @@ function GitHubUser() {
 }
 
 export default GitHubUser;
+// function setOpen(arg0: boolean) {
+//   throw new Error("Function not implemented.");
+// }
