@@ -1,55 +1,37 @@
-
-
-
 import React, { SetStateAction, useState } from "react";
-// import { useForm } from "react-hook-form";
-// import { TypeOf, date, z } from "zod";
-// import ProfileCard from "./ProfileCard";
-// import { zodResolver } from "@hookform/resolvers/zod";
-
-
 
 function GitHubUser() {
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm<FormValues>({
-  //   resolver: zodResolver(formSchema),
-  // });
-
-  // const onFormSubmit = (data: FormValues) => {
-  //   alert(data.username);
-  // };
-
   const [recentRepos, setRecentRepos] = useState([]);
-
-  // useEffect(() => {
-  //   fetch(`https://api.github.com/users/${username}/repos?sort=updated`)
-  //     .then((response) => response.json())
-  //     .then((data) => setRecentRepos(data))
-  //     .catch((err) => console.log(err));
-  // }, []);
-
   const [username, setUsername] = useState("");
   const [userData, setUserData] = useState(null);
 
   const handleSubm = async (e: any) => {
     e.preventDefault();
-    const response = await fetch(`https://api.github.com/users/${username}`);
-    const data = await response.json();
+    try{
+      const response = await fetch(`https://api.github.com/users/${username}`);
+      const data = await response.json();     
+      if (response.ok) {
+        setUserData(data);
+      } else {        
+        alert('No existe ese usuario');
+      }
 
-    setUserData(data);
-
-    const repoResponse = await fetch(`https://api.github.com/users/${username}/repos?sort=updated`);
-    const repoJson = await repoResponse.json();
-    setRecentRepos(repoJson);
+      const repoResponse = await fetch(`https://api.github.com/users/${username}/repos?sort=updated`);
+      const repoJson = await repoResponse.json();   
+      if (repoResponse.ok) {
+        setRecentRepos(repoJson);
+      } else {       
+        alert('No existen repositorios');
+      }
+    }catch(error){
+      alert('Error: ' + error.message);
+    }
+    
   };
 
   return (
     <div className="bg-gray-100 w-screen">
-      <div
-        // onSubmit={handleSubmit(onFormSubmit)}
+      <div        
         className="flex flex-col absolute inset-0 py-8"
       >
         <h1 className="text-2xl font-bold mb-6 text-gray-600 text-center dark:text-white">
@@ -73,14 +55,13 @@ function GitHubUser() {
                   value={username}
                   onChange={(e: { target: { value: SetStateAction<string>; }; }) => setUsername(e.target.value)}
                   placeholder="Username"
-                  // {...register("username")}
+                  
                 />
-                {/* <p className="text-red-500 mt-2">{errors?.username?.message}</p> */}
+                
               </div>
               <button
                 className="w-full bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300"
-                type="submit"
-                // onClick={handleClickOpen}
+                type="submit"               
               >
                 Accept
               </button>
@@ -186,8 +167,7 @@ Hire me
                   </div>
                 </div>
               </>
-            )}
-            {/* <ProfileCard userData={userData} username={username} /> */}
+            )}            
           </div>
           {/* Table */}          
           <div className="w-full max-w-xl mx-auto mt-3 bg-white shadow-lg rounded-sm border border-gray-200 dark:bg-gray-800">
@@ -210,16 +190,7 @@ Hire me
                       <div className="font-semibold text-left">Description</div>
                     </th>
                   </tr>
-                </thead>
-
-                {/* <h3>Recent Repositories:</h3>
-          <ul>
-            {repoData.map((repo) => (
-              <li key={repo.id}>
-                <a href={repo.html_url}>{repo.name}</a>: {repo.description}
-              </li>
-            ))}
-          </ul> */}
+                </thead>           
                 
                 <tbody className="text-sm divide-y divide-gray-100 ">
                  {recentRepos.map((list) => (
