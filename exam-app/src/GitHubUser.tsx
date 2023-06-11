@@ -1,33 +1,13 @@
-import Dialog from "@material-tailwind/react/components/Dialog";
-import {
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  TextField,
-} from "@mui/material";
-import Button from "@mui/material/Button";
-import { TransitionProps } from "@mui/material/transitions";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { TypeOf, date, z } from "zod";
-import ProfileCard from "./ProfileCard";
-import { zodResolver } from "@hookform/resolvers/zod";
 
-// const Transition = React.forwardRef(function Transition(
-//   props: TransitionProps & {
-//     children: React.ReactElement<any, any>;
-//   },
-//   ref: React.Ref<unknown>
-// ) {
-//   return <Slide direction="up" ref={ref} {...props} />;
-// });
 
-const formSchema = z.object({
-  username: z.string().min(1, "This Field is required"),
-});
 
-type FormValues = z.infer<typeof formSchema>;
+import React, { SetStateAction, useState } from "react";
+// import { useForm } from "react-hook-form";
+// import { TypeOf, date, z } from "zod";
+// import ProfileCard from "./ProfileCard";
+// import { zodResolver } from "@hookform/resolvers/zod";
+
+
 
 function GitHubUser() {
   // const {
@@ -44,12 +24,12 @@ function GitHubUser() {
 
   const [recentRepos, setRecentRepos] = useState([]);
 
-  useEffect(() => {
-    fetch(`https://api.github.com/users/${username}/repos?sort=updated`)
-      .then((response) => response.json())
-      .then((data) => setRecentRepos(data))
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   fetch(`https://api.github.com/users/${username}/repos?sort=updated`)
+  //     .then((response) => response.json())
+  //     .then((data) => setRecentRepos(data))
+  //     .catch((err) => console.log(err));
+  // }, []);
 
   const [username, setUsername] = useState("");
   const [userData, setUserData] = useState(null);
@@ -60,6 +40,10 @@ function GitHubUser() {
     const data = await response.json();
 
     setUserData(data);
+
+    const repoResponse = await fetch(`https://api.github.com/users/${username}/repos?sort=updated`);
+    const repoJson = await repoResponse.json();
+    setRecentRepos(repoJson);
   };
 
   return (
@@ -87,7 +71,7 @@ function GitHubUser() {
                   type="text"
                   id="username"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e: { target: { value: SetStateAction<string>; }; }) => setUsername(e.target.value)}
                   placeholder="Username"
                   // {...register("username")}
                 />
@@ -102,7 +86,7 @@ function GitHubUser() {
               </button>
             </form>
 
-            {userData && (
+            {userData && recentRepos &&(
               <>
                 <div className="bg-white text-left rounded-lg overflow-hidden transition-all transform shadow-lg sm:my-8 sm:align-middle sm:max-w-sm sm:w-full dark:bg-gray-800">
                   <div className="items-center w-full mr-auto ml-auto relative max-w-7xl ">
@@ -148,13 +132,13 @@ Hire me
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
-                          stroke-width="1.5"
+                          strokeWidth="1.5"
                           stroke="currentColor"
                           className="w-6 h-6 text-indigo-500 ml-2"
                         >
                           <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
                             d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
                           />
                         </svg>
@@ -179,13 +163,13 @@ Hire me
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
-                          stroke-width="1.5"
+                          strokeWidth="1.5"
                           stroke="currentColor"
                           className="w-6 h-6 text-amber-500 ml-2"
                         >
                           <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
                             d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"
                           />
                         </svg>
@@ -205,7 +189,7 @@ Hire me
             )}
             {/* <ProfileCard userData={userData} username={username} /> */}
           </div>
-          {/* Table */}
+          {/* Table */}          
           <div className="w-full max-w-xl mx-auto mt-3 bg-white shadow-lg rounded-sm border border-gray-200 dark:bg-gray-800">
             <header className="px-5 py-4 border-b border-gray-100">
               <div className="font-semibold text-gray-800 dark:text-white">
@@ -228,26 +212,37 @@ Hire me
                   </tr>
                 </thead>
 
+                {/* <h3>Recent Repositories:</h3>
+          <ul>
+            {repoData.map((repo) => (
+              <li key={repo.id}>
+                <a href={repo.html_url}>{repo.name}</a>: {repo.description}
+              </li>
+            ))}
+          </ul> */}
+                
                 <tbody className="text-sm divide-y divide-gray-100 ">
-                  {/* {recentRepos.map((list, index) => ( */}
-                  <tr>
+                 {recentRepos.map((list) => (
+                  <tr key={list.id}>
                     <td className="p-2">
-                      <div className="font-medium text-gray-800 dark:text-white">
-                        Samgufdf
-                        {/* {list.name} */}
+                      <div className="font-medium text-gray-800 dark:text-white">                       
+                        {list.name}
                       </div>
                     </td>
                     <td className="p-2">
                       <div className="font-medium text-gray-800 dark:text-white">
-                        Some Desc
+                      {list.description}
                       </div>
                     </td>
-                  </tr>
-                  {/* ))} */}
+                  </tr> 
+                  ))} 
                 </tbody>
+                
               </table>
+             
             </div>
           </div>
+          
         </div>
       </div>
     </div>
