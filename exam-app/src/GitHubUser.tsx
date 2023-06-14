@@ -7,33 +7,32 @@ function GitHubUser() {
 
   const handleSubm = async (e: any) => {
     e.preventDefault();
-    try{
+    try {
       const response = await fetch(`https://api.github.com/users/${username}`);
-      const data = await response.json();     
+      const data = await response.json();
       if (response.ok) {
         setUserData(data);
-      } else {        
-        alert('No existe ese usuario');
+      } else {
+        alert("No existe ese usuario");
       }
 
-      const repoResponse = await fetch(`https://api.github.com/users/${username}/repos?sort=updated`);
-      const repoJson = await repoResponse.json();   
+      const repoResponse = await fetch(
+        `https://api.github.com/users/${username}/repos?sort=updated`
+      );
+      const repoJson = await repoResponse.json();
       if (repoResponse.ok) {
         setRecentRepos(repoJson);
-      } else {       
-        alert('No existen repositorios');
+      } else {
+        alert("No existen repositorios");
       }
-    }catch(error){
-      alert('Error: ' + error.message);
+    } catch (error: any) {
+      alert("Error: " + error.message);
     }
-    
   };
 
   return (
     <div className="bg-gray-100 w-screen">
-      <div        
-        className="flex flex-col absolute inset-0 py-8"
-      >
+      <div className="flex flex-col absolute inset-0 py-8">
         <h1 className="text-2xl font-bold mb-6 text-gray-600 text-center dark:text-white">
           GitHub User
         </h1>
@@ -53,21 +52,23 @@ function GitHubUser() {
                   type="text"
                   id="username"
                   value={username}
-                  onChange={(e: { target: { value: SetStateAction<string>; }; }) => setUsername(e.target.value)}
+                  onChange={(e: {
+                    target: { value: SetStateAction<string> };
+                  }) => setUsername(e.target.value)}
                   placeholder="Username"
-                  
                 />
-                
               </div>
               <button
-                className="w-full bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300"
-                type="submit"               
+                className="w-full bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md 
+                  hover:bg-indigo-600 transition duration-300 disabled:bg-gray-500"
+                type="submit"
+                disabled={!username}
               >
                 Accept
               </button>
             </form>
 
-            {userData && recentRepos &&(
+            {userData && recentRepos && (
               <>
                 <div className="bg-white text-left rounded-lg overflow-hidden transition-all transform shadow-lg sm:my-8 sm:align-middle sm:max-w-sm sm:w-full dark:bg-gray-800">
                   <div className="items-center w-full mr-auto ml-auto relative max-w-7xl ">
@@ -91,15 +92,6 @@ function GitHubUser() {
                               {userData.bio}
                             </p>
                           </div>
-                          {/* <div className="w-full mt-6">
-<a
-className="flex text-center items-center justify-center w-full pt-4 pr-10 pb-4 pl-10 text-base
-                          font-medium text-white bg-indigo-600 rounded-xl transition duration-500 ease-in-out transform
-                          hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
->
-Hire me
-</a>
-</div> */}
                         </div>
                       </div>
                     </div>
@@ -167,9 +159,9 @@ Hire me
                   </div>
                 </div>
               </>
-            )}            
+            )}
           </div>
-          {/* Table */}          
+          {/* Table */}
           <div className="w-full max-w-xl mx-auto mt-3 bg-white shadow-lg rounded-sm border border-gray-200 dark:bg-gray-800">
             <header className="px-5 py-4 border-b border-gray-100">
               <div className="font-semibold text-gray-800 dark:text-white">
@@ -190,30 +182,27 @@ Hire me
                       <div className="font-semibold text-left">Description</div>
                     </th>
                   </tr>
-                </thead>           
-                
+                </thead>
+
                 <tbody className="text-sm divide-y divide-gray-100 ">
-                 {recentRepos.map((list) => (
-                  <tr key={list.id}>
-                    <td className="p-2">
-                      <div className="font-medium text-gray-800 dark:text-white">                       
-                        {list.name}
-                      </div>
-                    </td>
-                    <td className="p-2">
-                      <div className="font-medium text-gray-800 dark:text-white">
-                      {list.description}
-                      </div>
-                    </td>
-                  </tr> 
-                  ))} 
+                  {recentRepos.map((list) => (
+                    <tr key={list.id}>
+                      <td className="p-2">
+                        <div className="font-medium text-gray-800 dark:text-white">
+                          {list.name}
+                        </div>
+                      </td>
+                      <td className="p-2">
+                        <div className="font-medium text-gray-800 dark:text-white">
+                          {list.description}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
-                
               </table>
-             
             </div>
           </div>
-          
         </div>
       </div>
     </div>
